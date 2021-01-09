@@ -7,6 +7,12 @@
 #ifndef DS18B20_H_
 #define DS18B20_H_
 
+#define F_CPU 16000000UL
+#include <stdint.h>
+#include <asf.h>
+#include <util/delay.h>
+
+
 //definitions for ROM_COMMANDS
 #define SEARCH_ROM 0xF0
 #define READ_ROM 0x33
@@ -23,18 +29,36 @@
 #define READ_POWER_SUPPLY 0xB4
 
 
-int initDS18B20();
+int initDS18B20(void);
 
 //variables for different devices on 1-wire protocol
 //FOR THE ROM_CMDS
-static uint8_t family_code[10];
-static uint64_t serial_number[10];
-static uint8_t CRC_byte[10];
+static uint64_t ROM_code[10];
+static uint8_t info[9];
 
-//ROM_COMMANDS
-int read_rom_cmd();
-void write_cmd(uint8_t cmd)
 void write_bit(uint8_t bit);
+void write_zero(void);
+void write_one(void);
+void write_byte(uint8_t byte);
+uint8_t read_bit(void);
+uint8_t read_byte(void);
 
+//Function you use to access the ROM commands
+void rom_cmd(uint8_t cmd);
+//ROM COMMANDS
+void read_rom_cmd(void);
+void match_rom_cmd(int index);
+void skip_rom_cmd(void);
+void search_rom_cmd(void);
+void alarm_search_cmd(void);
 
+//Function you use to access the ROM commands
+void function_cmd(uint8_t cmd);
+//FUNCTION COMMANDS
+void convert_temp(void);
+uint16_t read_scratchpad(int stop);
+void write_scratchpad(void);
+void copy_scratchpad(void);
+void recall_e2(void);
+bool read_power_supply(void);
 #endif /* DS18B20_H_ */
